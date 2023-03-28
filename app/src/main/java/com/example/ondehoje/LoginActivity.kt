@@ -14,16 +14,20 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var linear_login: LinearLayout
     private lateinit var linear_register: LinearLayout
+    private lateinit var database : DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        database = FirebaseDatabase.getInstance().reference
         linear_login = findViewById(R.id.linear_login)
         linear_register = findViewById(R.id.linear_register)
 
@@ -115,6 +119,11 @@ class LoginActivity : AppCompatActivity() {
         if (permit) {
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                 if (it.isSuccessful) {
+                    val usuarios = database.child("usuarios")
+                    val ref = usuarios.child(auth!!.currentUser!!.uid)
+                    ref.child("id").setValue(auth!!.currentUser?.uid)
+                    ref.child("email").setValue(email)
+                    ref.child("nome").setValue(name)
                     Toast.makeText(
                         this,
                         "Usuaŕio cadastrado!",

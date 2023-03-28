@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.navigation_profile -> {
                     // Ação do item "Notifications"
+                    supportFragmentManager.beginTransaction().replace(R.id.viewPage, PerfilFragment()).commit()
                     true
                 }
                 else -> false
