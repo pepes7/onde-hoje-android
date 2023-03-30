@@ -139,7 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="8dp"
-                    android:text="Tipo:"
+                    android:text="Categoria:"
                     android:textSize="16dp" />
 
                 <Spinner
@@ -156,7 +156,33 @@
 
                     />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:text="Turno:"
+                    android:textSize="16dp" />
+
+                <Spinner
+                    android:id="@+id/spinner_turno_create"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:dropDownVerticalOffset="50dp"
+                    android:gravity="left"
+                    android:overlapAnchor="false"
+                    android:spinnerMode="dropdown"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+
+                    />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_create_event"

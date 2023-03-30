@@ -47,6 +47,9 @@ class CreateEventActivity : AppCompatActivity() {
     private var latitude = ""
     private var longitude = ""
     var category = ""
+    var turno = ""
+
+
     private val SELECAO_GALERIA = 200
     private var imagem: Bitmap? = null
     private lateinit var imageEvent: ImageView
@@ -54,7 +57,6 @@ class CreateEventActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
 
         if (resultCode == RESULT_OK) {
             try {
@@ -165,7 +167,7 @@ class CreateEventActivity : AppCompatActivity() {
         btnInsertPhoto = findViewById(R.id.btn_change_foto)
         imageEvent = findViewById(R.id.image_event)
 
-        val itens = arrayOf("", "Festa", "Comida")
+        val itens = arrayOf("", "Festa", "Reustaurante","Entretenimento", "Bar/Pub", "Café", "Museus", "Parques" )
         val spinner = findViewById<Spinner>(R.id.spinner)
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, itens)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -185,6 +187,29 @@ class CreateEventActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
         spinner.adapter = adapter
+
+
+        val itensTurno = arrayOf("", "Noturno", "Diurno","Matutino" )
+
+        val spinnerTurno = findViewById<Spinner>(R.id.spinner_turno_create)
+        val adapterTurno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itensTurno)
+        adapterTurno.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+
+        spinnerTurno.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                turno = selectedItem
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+        spinnerTurno.adapter = adapterTurno
 
         btnInsertPhoto.setOnClickListener {
             if (Permissao.validarPermissao(permisssaoGaleria, this, SELECAO_GALERIA)) {
@@ -224,11 +249,21 @@ class CreateEventActivity : AppCompatActivity() {
         }
 
         if (category.isEmpty()) {
-            Toast.makeText(applicationContext, "Escolha o tipo do evento", Toast.LENGTH_SHORT)
+            Toast.makeText(applicationContext, "Escolha a categoria do evento", Toast.LENGTH_SHORT)
                 .show()
             return
         }
 
+        if (turno.isEmpty()) {
+            Toast.makeText(applicationContext, "Escolha o turno do evento", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+        if (imagem == null) {
+            Toast.makeText(applicationContext, "Escolha uma foto!", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
         if (latitude.isEmpty() || longitude.isEmpty()) {
             Toast.makeText(this, "Procure seu endereco na barra de pesquisa", Toast.LENGTH_LONG)
                 .show()

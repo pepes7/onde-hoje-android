@@ -108,7 +108,18 @@
                     android:textAllCaps="false"
                     android:text="Editar informações"
                     />
-
+                <Button
+                    android:id="@+id/btn_edit_preferences"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_perfil_edit_shape"
+                    android:drawableLeft="@drawable/ic_calendar"
+                    android:padding="5dp"
+                    android:layout_marginTop="15dp"
+                    android:textColor="#161A32"
+                    android:textAllCaps="false"
+                    android:text="Editar preferências"
+                    />
                 <Button
                     android:id="@+id/btn_criar_evento"
                     android:layout_width="match_parent"
@@ -123,6 +134,7 @@
                     />
 
                 <Button
+                    android:id="@+id/btn_disconect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/button_disconect_shape"

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary"
+    tools:context=".DetailsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="32dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/calendar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_details_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Confraternização Ludus Lab"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="@+id/imageView4"
+            app:layout_constraintStart_toStartOf="@+id/imageView4"
+            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_pin_lilas"
+            app:layout_constraintBottom_toBottomOf="@+id/txt_details_location"
+            app:layout_constraintEnd_toStartOf="@+id/txt_details_location"
+            app:layout_constraintTop_toBottomOf="@+id/txt_details_title" />
+
+        <TextView
+            android:id="@+id/txt_details_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Escola Superior de Tecnologia, Manaus, Amazonas"
+            android:textColor="#AAAABC"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_details_title" />
+
+        <TextView
+            android:id="@+id/label_txt_details_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Categoria"
+            android:textAllCaps="true"
+            android:textColor="#7389F4"
+            android:textSize="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_details_location" />
+
+        <TextView
+            android:id="@+id/txt_details_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Festa"
+            android:textSize="15dp"
+            app:layout_constraintEnd_toEndOf="@+id/label_txt_details_category"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/label_txt_details_category"
+            app:layout_constraintTop_toBottomOf="@+id/label_txt_details_category" />
+
+        <TextView
+            android:id="@+id/label_txt_details_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Descrição"
+            android:textAllCaps="true"
+            android:textColor="#7389F4"
+            android:textSize="10dp"
+            app:layout_constraintStart_toStartOf="@+id/txt_details_category"
+            app:layout_constraintTop_toBottomOf="@+id/txt_details_category" />
+
+        <TextView
+            android:id="@+id/txt_details_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Ludus Lab é um laboratório da Universidade do Estado do Amazonas e estará promovendo uma confraternização para os alunos que fazem parte de seus programas de PD. Terá comida e bebida a disposição."
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="@+id/label_txt_details_description"
+            app:layout_constraintTop_toBottomOf="@+id/label_txt_details_description" />
+
+        <Button
+            android:id="@+id/btn_route"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:drawableLeft="@drawable/ic_plane"
+            android:padding="15dp"
+            android:drawablePadding="5dp"
+            android:background="@drawable/button_caminho"
+            android:text="Caminho"
+            app:layout_constraintStart_toStartOf="@+id/txt_details_description"
+            app:layout_constraintTop_toBottomOf="@+id/txt_details_description" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

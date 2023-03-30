@@ -7,64 +7,181 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.ondehoje.adapter.EventAdapter
+import com.example.ondehoje.dao.Event
+import com.example.ondehoje.dao.User
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var eventAdapterTrending: EventAdapter
+    private lateinit var eventAdapterNew: EventAdapter
+    private lateinit var eventAdapterForYou: EventAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var recyclerViewEventTrending: RecyclerView
+    private lateinit var recyclerViewEventNew: RecyclerView
+    private lateinit var recyclerViewEventForYou: RecyclerView
+
+    private var eventsTrending = arrayListOf<Event>()
+    private var eventsNew = arrayListOf<Event>()
+    private var eventsForYou = arrayListOf<Event>()
+
+    private lateinit var eventsReferenceTrending: DatabaseReference
+    private lateinit var userReference: DatabaseReference
+
+    private lateinit var eventsReferenceNew: Query
+    private lateinit var eventsReferenceForYou: Query
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
+        initial(view)
         view.findViewById<ImageView>(R.id.logo_home).setOnClickListener {
             screenLogin()
         }
+        setAdapters(view)
 
+        getEventsTrending()
+        getEventsNew()
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            userReference =
+                FirebaseDatabase.getInstance().reference.child("usuarios").child(user.uid)
+            getEventsForYou()
+        }
         return view
     }
 
-    fun screenLogin(){
+
+    fun initial(view: View) {
+        recyclerViewEventTrending = view.findViewById(R.id.recycler_view_events_trending)
+        recyclerViewEventNew = view.findViewById(R.id.recycler_view_events_new)
+        recyclerViewEventForYou = view.findViewById(R.id.recycler_view_events_for_you)
+
+
+        eventsReferenceTrending = FirebaseDatabase.getInstance().reference.child("events")
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val todayDate = dateFormat.format(Date())
+        eventsReferenceNew =
+            FirebaseDatabase.getInstance().reference.child("events").orderByChild("date")
+                .equalTo(todayDate.toString())
+        eventsReferenceForYou = FirebaseDatabase.getInstance().reference.child("events")
+
+        eventAdapterTrending = EventAdapter(view.context, eventsTrending)
+        eventAdapterNew = EventAdapter(view.context, eventsNew)
+        eventAdapterForYou = EventAdapter(view.context, eventsForYou)
+
+    }
+
+    fun setAdapters(view: View) {
+        recyclerViewEventTrending.layoutManager =
+            LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewEventTrending.hasFixedSize()
+
+        recyclerViewEventNew.layoutManager =
+            LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewEventNew.hasFixedSize()
+
+        recyclerViewEventForYou.layoutManager =
+            LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewEventForYou.hasFixedSize()
+
+        recyclerViewEventTrending.adapter = eventAdapterTrending
+        recyclerViewEventNew.adapter = eventAdapterNew
+        recyclerViewEventForYou.adapter = eventAdapterForYou
+
+    }
+
+
+    fun screenLogin() {
         startActivity(Intent(context, LoginActivity::class.java))
     }
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+
+    fun getEventsTrending() {
+        eventsReferenceTrending.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
             }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                eventsTrending.clear()
+                for (d in dataSnapshot.children) {
+                    val u = d.getValue(Event::class.java)
+                    u?.let {
+                        eventsTrending.add(it)
+                    }
+                }
+                eventAdapterTrending.notifyDataSetChanged()
+            }
+
+        })
+    }
+
+    fun getEventsNew() {
+        eventsReferenceNew.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                eventsNew.clear()
+                for (d in dataSnapshot.children) {
+                    val u = d.getValue(Event::class.java)
+                    u?.let {
+                        eventsNew.add(it)
+                    }
+                }
+                eventAdapterNew.notifyDataSetChanged()
+            }
+
+        })
+    }
+
+    fun getEventsForYou() {
+        userReference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val user = dataSnapshot.getValue(User::class.java)
+                user?.let {
+                    eventsReferenceForYou.orderByChild("category").equalTo(it.category)
+                        .addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {
+                            }
+
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                eventsForYou.clear()
+                                for (d in dataSnapshot.children) {
+                                    val u = d.getValue(Event::class.java)
+                                    u?.let {
+                                        if(u.turno == user.turno){
+                                            eventsForYou.add(it)
+                                        }
+                                    }
+                                }
+                                eventAdapterForYou.notifyDataSetChanged()
+                            }
+
+                        })
+
+                }
+
+            }
+        })
+
     }
 }

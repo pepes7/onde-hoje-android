@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -38,7 +39,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var locationCallback: LocationCallback
     private var currentLocationMarker: Marker? = null
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,14 +52,48 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
+        bottomNavigationView = requireActivity().findViewById(R.id.bottom_navigation)
         return rootView
     }
+    override fun onResume() {
+        super.onResume()
 
+        bottomNavigationView.selectedItemId = R.id.navigation_compass
+    }
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         addMyLocation()
-        // Adicionar marcador em uma localização
+        val event = arguments?.getParcelable<Event>("event")
+        if(event == null){
+            getEvents()
+
+            // Restaurar estado do mapa, se existir
+            if (mapState != null) {
+                googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(mapState!!))
+            } else {
+                // Mover a câmera para a localização
+                val latLng = LatLng(-3.0926155783574143, -60.017682273201736)
+                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                googleMap.moveCamera(cameraUpdate)
+            }
+        }else{
+            // Mover a câmera para a localização
+            val latLng = LatLng( event.latitude.toDouble(), event.longitude.toDouble())
+            val markerOptions = MarkerOptions().position(latLng).title(event.name)
+            googleMap.addMarker(markerOptions)
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+            googleMap.moveCamera(cameraUpdate)
+        }
+
+
+
+        // Adicionar listener para salvar estado do mapa
+        googleMap.setOnCameraIdleListener {
+            mapState = googleMap.cameraPosition
+        }
+    }
+
+    fun getEvents(){
         eventsReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
@@ -69,7 +104,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     u?.let {
                         val latLng = LatLng(it.latitude.toDouble(), it.longitude.toDouble())
                         val markerOptions = MarkerOptions().position(latLng).title(it.name)
-                        Log.i("@@@", latLng.toString())
                         googleMap.addMarker(markerOptions)
                         events.add(it)
                     }
@@ -79,23 +113,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         })
 
-
-        // Restaurar estado do mapa, se existir
-        if (mapState != null) {
-            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(mapState!!))
-        } else {
-            // Mover a câmera para a localização
-            val latLng = LatLng(-3.0926155783574143, -60.017682273201736)
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
-            googleMap.moveCamera(cameraUpdate)
-        }
-
-        // Adicionar listener para salvar estado do mapa
-        googleMap.setOnCameraIdleListener {
-            mapState = googleMap.cameraPosition
-        }
     }
-
     fun addMyLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
@@ -108,8 +126,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 location?.let {
                     val latLng = LatLng(location.latitude, location.longitude)
-                    val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
-                    googleMap.moveCamera(cameraUpdate)
                     addCurrentLocationMarker(latLng)
                 }
             }

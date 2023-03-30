@@ -74,6 +74,16 @@ class PerfilFragment : Fragment() {
         btn_perfil.setOnClickListener {
             startActivity( Intent( context, CreateEventActivity::class.java))
         }
+        val btn_preferencias = view.findViewById<Button>(R.id.btn_edit_preferences)
+        btn_preferencias.setOnClickListener {
+            startActivity( Intent( context, PreferencesActivity::class.java))
+        }
+
+        val btn_disconect = view.findViewById<Button>(R.id.btn_disconect)
+        btn_disconect.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            startActivity( Intent( context, SplashActivity::class.java))
+        }
         return view
     }
 

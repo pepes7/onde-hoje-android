@@ -14,4 +14,17 @@
         <!-- Customize your theme here. -->
         <item name="android:fontFamily">@font/lexend</item>
     </style>
+
+    <style name="SpinnerTheme" parent="Theme.AppCompat.Light">
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemStyle</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItemStyle</item>
+    </style>
+
+    <style name="SpinnerDropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="SpinnerItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">#E91E63</item>
+    </style>
 </resources>
